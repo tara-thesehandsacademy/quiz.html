@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Managing Deterioration Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f4f3f7;
+      color: #2a324b;
+    }
+    .quiz-container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .answers label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    .nav-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0087d0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .nav-btn:hover {
+      background-color: #0067a3;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div id="quiz"></div>
+    <div>
+      <button class="nav-btn" onclick="prevQuestion()">Previous</button>
+      <button class="nav-btn" onclick="nextQuestion()">Next</button>
+      <button class="nav-btn" onclick="submitQuiz()">Submit</button>
+    </div>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "What does SBAR stand for?", options: ["Safety, Breathing, Alertness, Response", "Situation, Background, Assessment, Recommendation", "Signs, Behavior, Analysis, Result"], answer: 1 },
+      { question: "True/False: A single good observation is enough to skip further practice.", options: ["True", "False"], answer: 1 },
+      { question: "True/False: It is not necessary to clean equipment after every use.", options: ["True", "False"], answer: 1 },
+      { question: "Which of the following is a single-use item?", options: ["Stethoscope", "Blood pressure cuff", "Probe cover", "Pulse oximeter"], answer: 2 },
+      { question: "Data transfer from equipment is primarily used for:", options: ["Charging", "Disinfection", "Record-keeping and escalation", "Diagnosing illnesses"], answer: 2 },
+      { question: "True/False: It’s acceptable to store oxygen probes in open, damp areas.", options: ["True", "False"], answer: 1 },
+      { question: "True/False: A full respiratory assessment takes at least one full minute.", options: ["True", "False"], answer: 0 },
+      { question: "True/False: The cuff should be placed directly on bare skin.", options: ["True", "False"], answer: 0 },
+      { question: "Which of the following indicates the most severe condition?", options: ["Alert", "Verbal", "Pain", "Unconscious"], answer: 3 },
+      { question: "True/False: Nail varnish can interfere with oxygen saturation readings.", options: ["True", "False"], answer: 0 },
+      { question: "True/False: A patient who is asleep but easily roused is considered 'Unconscious'.", options: ["True", "False"], answer: 1 },
+      { question: "True/False: Consent is implied when a resident nods during explanation.", options: ["True", "False"], answer: 0 },
+      { question: "How many supervised observations are required?", options: ["1", "2", "3", "4"], answer: 2 },
+      { question: "What is the minimum duration for measuring oxygen saturation?", options: ["10 seconds", "30 seconds", "1 minute", "Until stable"], answer: 2 },
+      { question: "What is considered a normal adult blood pressure range?", options: ["90/60 to 120/80", "60/40 to 80/60", "140/90 to 160/100", "None of the above"], answer: 0 },
+      { question: "Where should a tympanic thermometer be placed?", options: ["Under the tongue", "In the ear canal", "On the forehead", "Under the armpit"], answer: 1 },
+      { question: "What does ACPVU stand for?", options: ["Alert, Confused, Pain, Verbal, Unconscious", "Alert, Confused, Posture, Voice, Unresponsive", "Alert, Confused, Pain, Verbal, Unresponsive", "None of the above"], answer: 2 },
+      { question: "What is the purpose of a NEWS2 chart?", options: ["Document allergies", "Track deterioration", "Monitor food intake", "Record sleep"], answer: 1 },
+      { question: "What should be done if a candidate fails to meet the standard?", options: ["Sign them off anyway", "Repeat assessment later", "Ignore it", "Escalate to manager immediately"], answer: 1 },
+      { question: "Which of these could skew oxygen saturation readings?", options: ["Poor circulation", "Bright lighting", "Talking during measurement", "All of the above"], answer: 3 }
+    ];
+
+    let currentQuestion = 0;
+    const userAnswers = [];
+
+    function renderQuestion() {
+      const q = questions[currentQuestion];
+      const quizDiv = document.getElementById('quiz');
+      let html = `<div class='question'>${currentQuestion + 1}. ${q.question}</div><div class='answers'>`;
+      q.options.forEach((option, idx) => {
+        const checked = userAnswers[currentQuestion] == idx ? 'checked' : '';
+        html += `<label><input type='radio' name='q${currentQuestion}' value='${idx}' ${checked}> ${option}</label>`;
+      });
+      html += '</div>';
+      quizDiv.innerHTML = html;
+    }
+
+    function nextQuestion() {
+      saveAnswer();
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      saveAnswer();
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+      }
+    }
+
+    function saveAnswer() {
+      const selected = document.querySelector(`input[name='q${currentQuestion}']:checked`);
+      if (selected) {
+        userAnswers[currentQuestion] = parseInt(selected.value);
+      }
+    }
+
+    function submitQuiz() {
+      saveAnswer();
+      let score = 0;
+      questions.forEach((q, i) => {
+        if (userAnswers[i] === q.answer) score++;
+      });
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
